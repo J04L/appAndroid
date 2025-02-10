@@ -29,10 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.app_android.Model.TipoHabitacion
 
 @Composable
-@Preview
-fun pantallaHabitaciones(){
+fun pantallaHabitaciones(lista : MutableMap<String, TipoHabitacion>){
     BoxWithConstraints {
         Column {
             //habitacion suite
@@ -48,7 +48,7 @@ fun pantallaHabitaciones(){
                 horizontalAlignment = Alignment.End
             ){
                 Text( text = "Suite")
-                Text(text = "4 adultos 2 menores")
+                Text(text = "desde " + lista["Suite"]?.precioBase.toString() + "€")
             }
             Row (modifier = Modifier.weight(1f)){
                 Column (modifier = Modifier.width(this@BoxWithConstraints.maxWidth*0.5f)){
@@ -65,7 +65,7 @@ fun pantallaHabitaciones(){
                         horizontalAlignment = Alignment.Start
                     ){
                         Text( text = "Triple")
-                        Text(text = "3 adultos")
+                        Text(text = "desde " + lista["Triple"]?.precioBase.toString() + "€")
                     }
                     //habitacion familiar
                     Column(
@@ -80,7 +80,7 @@ fun pantallaHabitaciones(){
                         horizontalAlignment = Alignment.Start
                     ){
                         Text( text = "Familiar")
-                        Text(text = "2 adultos 1 menor")
+                        Text(text = "desde " + lista["Familiar"]?.precioBase.toString() + "€")
                     }
                 }
                 Column (modifier = Modifier.width(this@BoxWithConstraints.maxWidth*0.5f)){
@@ -97,7 +97,7 @@ fun pantallaHabitaciones(){
                         horizontalAlignment = Alignment.End
                     ){
                         Text( text = "Doble")
-                        Text(text = "2 adultos")
+                        Text(text = "desde " + lista["Doble"]?.precioBase.toString() + "€")
                     }
                     //celda habitacion Individual
                     Column(
@@ -111,7 +111,7 @@ fun pantallaHabitaciones(){
                         horizontalAlignment = Alignment.End
                     ) {
                         Text(text = "Individual")
-                        Text(text = "1 adulto")
+                        Text(text = "desde " + lista["Individual"]?.precioBase.toString()  + "€")
                     }
                 }
             }
