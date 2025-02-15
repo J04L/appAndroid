@@ -15,7 +15,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.app_android.View.MenuHabitaciones.pantallaHabitaciones
+import com.example.app_android.View.Navigation.BottomNavItem
+import com.example.app_android.View.Navigation.BottomNavigationBar
 import com.example.app_android.ViewModel.HabitacionViewModel
 import com.example.app_android.ui.theme.AppandroidTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -28,25 +33,30 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppandroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                val navController = rememberNavController()
+                Scaffold(
+                    bottomBar = { BottomNavigationBar(navController) }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = BottomNavItem.Reservas.route,
                         modifier = Modifier.padding(innerPadding)
-                    )
-                    val listaTipoHabitaciones = habitacionViewModel.tipoHabitaciones.collectAsState().value
-                    pantallaHabitaciones(listaTipoHabitaciones)
+                    ) {
+                        composable(BottomNavItem.Reservas.route) { pantallaHabitaciones(habitacionViewModel) }
+                        composable(BottomNavItem.Perfil.route) { Greeting("joel") }
+                    }
                 }
-            }
-        }
-        lifecycleScope.launch{
-            habitacionViewModel.tipoHabitaciones.collectLatest { lista ->
-                for((nombre, valor) in lista){
-                    Log.d("hola", nombre + valor.precioBase)
-                }
+
             }
         }
     }
 }
+@Composable
+fun MainScreen() {
+
+
+}
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

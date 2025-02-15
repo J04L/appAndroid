@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class HabitacionViewModel : ViewModel() {
-    private val _tipoHabitaciones = MutableStateFlow<MutableMap<String, TipoHabitacion>>(mutableMapOf())
-    val tipoHabitaciones: StateFlow<MutableMap<String, TipoHabitacion>> = _tipoHabitaciones
+    private val _tipoHabitaciones = MutableStateFlow<List<TipoHabitacion>>(emptyList())
+    val tipoHabitaciones: StateFlow<List<TipoHabitacion>> = _tipoHabitaciones
 
     init {
         obtenerTipoHabitaciones()
@@ -19,18 +19,10 @@ class HabitacionViewModel : ViewModel() {
     private fun obtenerTipoHabitaciones() {
         viewModelScope.launch {
             try {
-                val lista = RetrofitClient.instance.obtenerTipoHabitaciones()
-
-                // Crear una copia del mapa y modificarlo
-                val nuevoMapa = _tipoHabitaciones.value.toMutableMap()
-                lista.forEach { tipo ->
-                    nuevoMapa[tipo.nombreTipo] = tipo
-                }
-
                 // Asignar el nuevo mapa para actualizar el StateFlow
-                _tipoHabitaciones.value = nuevoMapa
+                _tipoHabitaciones.value = RetrofitClient.instance.obtenerTipoHabitaciones()
             } catch (e: Exception) {
-                _tipoHabitaciones.value = mutableMapOf() // Manejamos errores correctamente
+                _tipoHabitaciones.value = emptyList() // Manejamos errores correctamente
             }
         }
     }
