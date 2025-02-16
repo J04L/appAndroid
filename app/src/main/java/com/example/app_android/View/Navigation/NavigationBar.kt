@@ -18,30 +18,34 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     object Perfil : BottomNavItem("perfil", Icons.Default.Person, "Perfil")
     object Reservas : BottomNavItem("reservas", Icons.Default.DateRange, "Reservas")
+    object Login : BottomNavItem("login",Icons.Default.Person,"Login")
+    object Register: BottomNavItem("register",Icons.Default.Person,"Register")
 }
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    val items = listOf(
-        BottomNavItem.Perfil,
-        BottomNavItem.Reservas
-    )
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
-    NavigationBar {
-        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    // Check if the current route is NOT the Login or Register route
+    if (currentRoute != BottomNavItem.Login.route && currentRoute != BottomNavItem.Register.route) {
+        val items = listOf(
+            BottomNavItem.Perfil,
+            BottomNavItem.Reservas,
+        )
 
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
-                label = { Text(item.title) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route)
+        NavigationBar {
+            items.forEach { item ->
+                NavigationBarItem(
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                    label = { Text(item.title) },
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        if (currentRoute != item.route) {
+                            navController.navigate(item.route)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
-
