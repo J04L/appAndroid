@@ -1,8 +1,9 @@
 package com.example.app_android.View.MenuHabitaciones
 
-import android.content.Context
+import android.R
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,14 +20,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsEndWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -35,46 +32,73 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.booleanResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import com.example.app_android.Model.TipoHabitacion
 import com.example.app_android.ViewModel.HabitacionViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
+
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun pantallaHabitaciones(viewModel: HabitacionViewModel){
     var lista = viewModel.tipoHabitaciones.collectAsState().value;
     BoxWithConstraints(){
-        var isSelected by remember { mutableStateOf(false) }
-        var selectecBox = "";
-        val opacity = animateFloatAsState(
-            targetValue = if(isSelected) 0f else 1f,
-            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
-        )
+        var someoneIsSelected by remember { mutableStateOf(false) }
+        var selectedBox by remember { mutableStateOf("") }
+        var listaVisibles by remember { mutableStateOf<MutableMap<String, Float>>(mutableMapOf(
+            "Suite" to 1f,
+            "Triple" to 1f,
+            "Familiar" to 1f,
+            "Doble" to 1f,
+            "Individual" to 1f)) }
+
+        LaunchedEffect(someoneIsSelected) {
+            if (!someoneIsSelected) return@LaunchedEffect
+            listaVisibles = listaVisibles.mapValues { (clave, _) ->
+                if(clave != selectedBox) 0f else 1f
+            }.toMutableMap()
+            delay(500)
+            listaVisibles = listaVisibles.mapValues { 1f }.toMutableMap()
+            delay(125)
+            listaVisibles = listaVisibles.mapValues { (clave, _) ->
+                if(clave != selectedBox) 0f else 1f
+            }.toMutableMap()
+            delay(100)
+            listaVisibles = listaVisibles.mapValues { 1f }.toMutableMap()
+            delay(250)
+            listaVisibles = listaVisibles.mapValues { (clave, _) ->
+                if(clave != selectedBox) 0f else 1f
+            }.toMutableMap()
+            someoneIsSelected = false
+        }
+
         val foreground = Color.White
         val fontTitleSize = 33.sp
         val fontSize = 20.sp
-        val borderColor = Color.White
+        val borderColor = Color.Transparent
         val backgroundTransparet = Color.Black.copy(alpha = 0.65F)
+        val paddingBox = 5.dp
         val baseUrl = "http://192.168.1.33:3036/img/habitaciones"
         Column {
             //habitacion suite
             Box(modifier = Modifier
                 .weight(0.4f)
                 .clickable(onClick = {
-                    selectecBox = "suite"
-                    isSelected = !isSelected
+                    someoneIsSelected = true
+                    selectedBox = "Suite"
                 })
                 .fillMaxWidth()
-                .alpha(if (selectecBox == "suite") 1f else opacity.value)
-                .border(2.dp, borderColor)){
+                .alpha(listaVisibles["Suite"]?.toFloat() ?: 0f)
+                //.clip(RoundedCornerShape(30.dp))
+                .padding(paddingBox)){
                 AsyncImage(
                     model = "$baseUrl/habSuite/vistaEntrada.jpg", // URL de la imagen
                     contentDescription = "Imagen cargada desde URL",
@@ -101,12 +125,12 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(0.5f)
                         .clickable(onClick = {
-                            selectecBox = "triple"
-                            isSelected = !isSelected
+                            someoneIsSelected = true
+                            selectedBox = "Triple"
                         })
                         .fillMaxWidth()
-                        .alpha(if (selectecBox == "triple") 1f else opacity.value)
-                        .border(2.dp, borderColor)){
+                        .alpha(listaVisibles["Triple"]?.toFloat() ?: 0f)
+                        .padding(paddingBox)){
                         AsyncImage(
                             model = "$baseUrl/habTriple/vistaEntrada.jpg", // URL de la imagen
                             contentDescription = "Imagen cargada desde URL",
@@ -130,14 +154,14 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     }
                     //habitacion familiar
                     Box(modifier = Modifier
-                        .weight(1f)
+                        .weight(0.75f)
                         .clickable(onClick = {
-                            selectecBox = "familiar"
-                            isSelected = !isSelected
+                            someoneIsSelected = true
+                            selectedBox = "Familiar"
                         })
                         .fillMaxWidth()
-                        .alpha(if (selectecBox == "familiar") 1f else opacity.value)
-                        .border(2.dp, Color.White)) {
+                        .alpha(listaVisibles["Familiar"]?.toFloat() ?: 0f)
+                        .padding(paddingBox)) {
                         AsyncImage(
                             model = "$baseUrl/habFamiliar/vistaBano2.jpg", // URL de la imagen
                             contentDescription = "Imagen cargada desde URL",
@@ -164,12 +188,12 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(1.5f)
                         .clickable(onClick = {
-                            selectecBox = "doble"
-                            isSelected = !isSelected
+                            someoneIsSelected = true
+                            selectedBox = "Doble"
                         })
                         .fillMaxWidth()
-                        .alpha(if (selectecBox == "doble") 1f else opacity.value)
-                        .border(2.dp, borderColor)) {
+                        .alpha(listaVisibles["Doble"]?.toFloat() ?: 0f)
+                        .padding(paddingBox)) {
                         AsyncImage(
                             model = "$baseUrl/habDoble/vistaCamas.jpg", // URL de la imagen
                             contentDescription = "Imagen cargada desde URL",
@@ -194,12 +218,12 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(1f)
                         .clickable(onClick = {
-                            selectecBox = "individual"
-                            isSelected = !isSelected
+                            someoneIsSelected = true
+                            selectedBox = "Individual"
                         })
                         .fillMaxWidth()
-                        .alpha(if (selectecBox == "individual") 1f else opacity.value)
-                        .border(2.dp, borderColor)) {
+                        .alpha(listaVisibles["Individual"]?.toFloat() ?: 0f)
+                        .padding(paddingBox)) {
                         AsyncImage(
                             model = "$baseUrl/habIndividual/vistaMesita.jpg", // URL de la imagen
                             contentDescription = "Imagen cargada desde URL",
