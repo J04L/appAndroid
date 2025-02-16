@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import com.example.app_android.View.Navigation.BottomNavItem
 import com.example.app_android.View.Navigation.BottomNavigationBar
 import com.example.app_android.ViewModel.HabitacionViewModel
 import com.example.app_android.ui.theme.AppandroidTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -33,6 +35,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppandroidTheme {
+                val habitaciones = habitacionViewModel.Habitaciones.collectAsState()
                 val navController = rememberNavController()
                 Scaffold(
                     bottomBar = { BottomNavigationBar(navController) }
@@ -45,8 +48,11 @@ class MainActivity : ComponentActivity() {
                         composable(BottomNavItem.Reservas.route) { pantallaHabitaciones(habitacionViewModel) }
                         composable(BottomNavItem.Perfil.route) { Greeting("joel") }
                     }
-                }
+                        habitaciones.value.forEach{ habitacion ->
+                            Log.d("Habitacion", (habitacion.numeroHabitacion + habitacion.fotos.count()).toString())
+                        }
 
+                }
             }
         }
     }
