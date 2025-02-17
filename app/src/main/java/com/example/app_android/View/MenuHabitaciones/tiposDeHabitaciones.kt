@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 fun pantallaHabitaciones(viewModel: HabitacionViewModel){
     var lista = viewModel.tipoHabitaciones.collectAsState().value;
     BoxWithConstraints(){
-        var someoneIsSelected by remember { mutableStateOf(false) }
+        var someBoxIsSelected by remember { mutableStateOf(false) }
         var selectedBox by remember { mutableStateOf("") }
         var listaVisibles by remember { mutableStateOf<MutableMap<String, Float>>(mutableMapOf(
             "Suite" to 1f,
@@ -45,8 +45,8 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
             "Doble" to 1f,
             "Individual" to 1f)) }
 
-        LaunchedEffect(someoneIsSelected) {
-            if (!someoneIsSelected) return@LaunchedEffect
+        LaunchedEffect(someBoxIsSelected) {
+            if (!someBoxIsSelected) return@LaunchedEffect
             listaVisibles = listaVisibles.mapValues { (clave, _) ->
                 if(clave != selectedBox) 0f else 1f
             }.toMutableMap()
@@ -62,7 +62,7 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
             listaVisibles = listaVisibles.mapValues { (clave, _) ->
                 if(clave != selectedBox) 0f else 1f
             }.toMutableMap()
-            someoneIsSelected = false
+            someBoxIsSelected = false
         }
 
         val foreground = Color.White
@@ -71,13 +71,13 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
         val borderColor = Color.Transparent
         val backgroundTransparet = Color.Black.copy(alpha = 0.65F)
         val paddingBox = 5.dp
-        val baseUrl = "http://192.168.1.33:3036/img/habitaciones"
+        val baseUrl = "http://10.0.2.2:3036/img/habitaciones"
         Column {
             //habitacion suite
             Box(modifier = Modifier
                 .weight(0.4f)
                 .clickable(onClick = {
-                    someoneIsSelected = true
+                    someBoxIsSelected = true
                     selectedBox = "Suite"
                 })
                 .fillMaxWidth()
@@ -110,7 +110,7 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(0.5f)
                         .clickable(onClick = {
-                            someoneIsSelected = true
+                            someBoxIsSelected = true
                             selectedBox = "Triple"
                         })
                         .fillMaxWidth()
@@ -141,7 +141,7 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(0.75f)
                         .clickable(onClick = {
-                            someoneIsSelected = true
+                            someBoxIsSelected = true
                             selectedBox = "Familiar"
                         })
                         .fillMaxWidth()
@@ -173,7 +173,7 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(1.5f)
                         .clickable(onClick = {
-                            someoneIsSelected = true
+                            someBoxIsSelected = true
                             selectedBox = "Doble"
                         })
                         .fillMaxWidth()
@@ -203,7 +203,7 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     Box(modifier = Modifier
                         .weight(1f)
                         .clickable(onClick = {
-                            someoneIsSelected = true
+                            someBoxIsSelected = true
                             selectedBox = "Individual"
                         })
                         .fillMaxWidth()

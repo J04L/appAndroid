@@ -43,24 +43,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppandroidTheme {
                 val habitaciones = habitacionViewModel.Habitaciones.collectAsState()
+
                 val navController = rememberNavController()
                 Scaffold(
                     bottomBar = { BottomNavigationBar(navController) }
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = BottomNavItem.Login.route,
+                        startDestination = BottomNavItem.Reservas.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(BottomNavItem.Register.route){ RegisterScreen(navController,registerViewModel) }
                         composable(BottomNavItem.Login.route){ LoginScreen (navController,loginViewModel )}
-                        composable(BottomNavItem.Reservas.route) { pantallaHabitaciones(habitacionViewModel) }
+                        composable(BottomNavItem.Reservas.route) {
+                            pantallaHabitaciones(
+                                habitacionViewModel
+                            )
+                        }
                         composable(BottomNavItem.Perfil.route) { Greeting("joel") }
                     }
-                        habitaciones.value.forEach{ habitacion ->
-                            Log.d("Habitacion", (habitacion.numeroHabitacion + habitacion.fotos.count()).toString())
-                        }
-
                 }
             }
         }
