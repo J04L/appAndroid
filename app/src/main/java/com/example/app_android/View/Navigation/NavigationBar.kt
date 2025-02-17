@@ -20,7 +20,6 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
     object Perfil : BottomNavItem("perfil", Icons.Default.Person, "Perfil")
     object Reservas : BottomNavItem("reservas", Icons.Default.DateRange, "Reservas")
     object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "Reservar") // Nuevo botón
-
     object Login : BottomNavItem("login",Icons.Default.Person,"Login")
     object Register: BottomNavItem("register",Icons.Default.Person,"Register")
 }

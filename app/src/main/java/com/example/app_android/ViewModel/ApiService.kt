@@ -11,7 +11,6 @@ import com.example.app_android.Model.RegisterResponse
 import com.example.app_android.Model.TipoHabitacion
 import com.example.app_android.Model.Reserva  // Asegúrate de tener la clase Reserva en tu modelo
 import kotlinx.coroutines.flow.Flow
-import okhttp3.Response
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -29,7 +28,8 @@ interface ApiService {
     suspend fun hacerReserva(@Body reserva: Reserva): Reserva
 
     @POST("reservas/new")
-    fun crearReserva(@Body reserva: Reserva): Reserva
+    suspend fun crearReserva(@Body reserva: Reserva): Response<Reserva>
+
     @POST("usuarios/loginApp")
     suspend fun loginApp(@Body loginRequest: LoginRequest): LoginResponse
 

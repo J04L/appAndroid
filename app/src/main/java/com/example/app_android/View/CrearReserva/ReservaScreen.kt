@@ -1,8 +1,10 @@
 package com.example.app_android.View.CrearReserva
+
 import com.example.app_android.ViewModel.ReservaViewModel
 import android.app.DatePickerDialog
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,14 +27,18 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Locale
 
 @Composable
 fun ReservaScreen(viewModel: ReservaViewModel) {
     val context = LocalContext.current
-    var habitacionesDisponibles by remember { mutableStateOf<List<Habitacion>>(emptyList()) }
+    var habitacionesDisponibles by remember { mutableStateOf<List<Habitacion1>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val coroutineScope = rememberCoroutineScope()
+
+
+
 
     Column(
         modifier = Modifier
@@ -137,59 +143,65 @@ fun ReservaScreen(viewModel: ReservaViewModel) {
             Text(text = "Error: $it", color = Color.Red)
         }
 
-        // 📋 Lista de habitaciones disponibles
+        // Mostrar lista de habitaciones disponibles
         if (habitacionesDisponibles.isNotEmpty()) {
             Text(text = "Habitaciones disponibles:", fontSize = 20.sp)
             LazyColumn {
                 items(habitacionesDisponibles) { habitacion ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        elevation = CardDefaults.cardElevation(4.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            AsyncImage(
-                                model = habitacion.fotoUrl,
-                                contentDescription = "Imagen de la habitación",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(150.dp)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = "Tipo: ${habitacion.tipo}", fontSize = 18.sp)
-                            Text(text = "Precio: $${habitacion.precio}", fontSize = 16.sp)
-
-                            Button(
-                                onClick = {
-                                    val reserva = viewModel.crearReserva()
-
-                                    // Llamada al endpoint de creación de reserva
-                                    coroutineScope.launch {
-                                        val response = RetrofitClient.instance.crearReserva(reserva)
-
-                                    }
-                                }
-                            ) {
-                                Text(text = "Reservar esta habitación")
-                            }
+                    HabitacionItem(
+                        habitacion = habitacion,
+                        viewModel = viewModel,
+                        onReservaConfirmada = {
+                            // Eliminar todas las habitaciones disponibles después de hacer la reserva
+                            habitacionesDisponibles = emptyList()
                         }
-                    }
+                    )
                 }
             }
+        }
+
+        // Mostrar estado de carga y errores
+        if (isLoading) {
+            CircularProgressIndicator()
+        }
+
+        errorMessage?.let {
+            Text(text = "Error: $it", color = Color.Red)
         }
     }
 }
 
-// 📡 Función para hacer la petición al servidor
+//  Función para hacer la petición al servidor
+
 suspend fun buscarHabitaciones(
     capacidad: Int,
     fechaInicio: String,
     fechaFin: String
-): Result<List<Habitacion>> {
+): Result<List<Habitacion1>> {
     return withContext(Dispatchers.IO) {
         try {
-            val url = URL("http://10.0.2.2:3036/api/reservas/habitaciones/libres") // ✅ Cambiado
+            // Determinar si es necesario formatear la fecha
+            val fechaInicioStr: String
+            val fechaFinStr: String
+
+            if (fechaInicio.contains("-")) { // Si tiene guiones, es yyyy-MM-dd
+                val inputDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val outputDateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+
+                val fechaInicioFormat = inputDateFormat.parse(fechaInicio.trim())
+                val fechaFinFormat = inputDateFormat.parse(fechaFin.trim())
+
+                fechaInicioStr = outputDateFormat.format(fechaInicioFormat!!)
+                fechaFinStr = outputDateFormat.format(fechaFinFormat!!)
+            } else {
+                // Si ya viene en yyyy/MM/dd, usarla directamente
+                fechaInicioStr = fechaInicio.trim()
+                fechaFinStr = fechaFin.trim()
+            }
+
+            Log.d("Reserva", "Fecha formateada: $fechaInicioStr - $fechaFinStr")
+
+            val url = URL("http://10.0.2.2:3036/api/reservas/habitaciones/libres")
             val connection = url.openConnection() as HttpURLConnection
             connection.requestMethod = "POST"
             connection.setRequestProperty("Content-Type", "application/json")
@@ -197,9 +209,11 @@ suspend fun buscarHabitaciones(
 
             val jsonBody = JSONObject().apply {
                 put("capacidad", capacidad)
-                put("fecha_inicio", fechaInicio)
-                put("fecha_fin", fechaFin)
+                put("fecha_inicio", fechaInicioStr)
+                put("fecha_fin", fechaFinStr)
             }
+
+            Log.d("Reserva", "JSON enviado: $jsonBody")
 
             connection.outputStream.use { os ->
                 os.write(jsonBody.toString().toByteArray())
@@ -207,7 +221,7 @@ suspend fun buscarHabitaciones(
 
             if (connection.responseCode == 200) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
-                Log.d("Reserva", "Respuesta del servidor: $response") // Imprime el JSON recibido
+                Log.d("Reserva", "Respuesta del servidor: $response")
                 val habitaciones = parsearHabitaciones(response)
                 return@withContext Result.success(habitaciones)
             } else {
@@ -255,7 +269,7 @@ fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
 }
 
 // 🏨 Modelo de Habitación actualizado
-data class Habitacion(
+data class Habitacion1(
     val numeroHabitacion: Int,
     val tipo: String,
     val precio: Double,
@@ -263,9 +277,9 @@ data class Habitacion(
 )
 
 // ✅ Función corregida para parsear JSON correctamente
-fun parsearHabitaciones(json: String): List<Habitacion> {
+fun parsearHabitaciones(json: String): List<Habitacion1> {
     val jsonArray = JSONArray(json)
-    val lista = mutableListOf<Habitacion>()
+    val lista = mutableListOf<Habitacion1>()
 
     for (i in 0 until jsonArray.length()) {
         val obj = jsonArray.getJSONObject(i)
@@ -282,11 +296,12 @@ fun parsearHabitaciones(json: String): List<Habitacion> {
         }
 
         lista.add(
-            Habitacion(
+
+            Habitacion1(
                 numeroHabitacion = obj.getInt("numeroHabitacion"),
                 tipo = tipoHabitacion,
                 precio = precio,
-                fotoUrl = "http://10.0.2.2:3036/img/habitaciones/habSuite/vistaEntrada.jpg"
+                fotoUrl = primeraFoto
             )
         )
     }
@@ -299,7 +314,7 @@ fun ConfirmacionReservaDialog(
     openDialog: Boolean,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    habitacion: Habitacion
+    habitacion: Habitacion1
 ) {
     if (openDialog) {
         AlertDialog(
@@ -332,7 +347,11 @@ fun ConfirmacionReservaDialog(
     }
 }
 @Composable
-fun HabitacionItem(habitacion: Habitacion, viewModel: ReservaViewModel) {
+fun HabitacionItem(
+    habitacion: Habitacion1,
+    viewModel: ReservaViewModel,
+    onReservaConfirmada: () -> Unit // Callback para cuando se confirme la reserva
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -356,12 +375,28 @@ fun HabitacionItem(habitacion: Habitacion, viewModel: ReservaViewModel) {
 
             Button(
                 onClick = {
+                    // Al hacer clic, se selecciona esta habitación
+                    viewModel.habitacionSeleccionada = habitacion
                     val reserva = viewModel.crearReserva()
 
-                    // Llamada al endpoint de creación de reserva
                     coroutineScope.launch {
-                        val response = RetrofitClient.instance.crearReserva(reserva)
+                        try {
+                            val response = RetrofitClient.instance.crearReserva(reserva)
+                            if (response != null) {
+                                // La reserva fue exitosa
+                                Toast.makeText(context, "Reserva realizada con éxito", Toast.LENGTH_SHORT).show()
 
+                                // Llamamos a la función para limpiar la lista de habitaciones
+                                onReservaConfirmada()
+                            } else {
+                                // Error en la respuesta
+                                Toast.makeText(context, "Error al realizar la reserva", Toast.LENGTH_SHORT).show()
+                            }
+
+                        } catch (e: Exception) {
+                            // Manejar errores en la llamada, como problemas de conexión
+                            Log.e("Reserva", "Excepción al crear la reserva: ${e.message}")
+                        }
                     }
                 }
             ) {
@@ -370,5 +405,4 @@ fun HabitacionItem(habitacion: Habitacion, viewModel: ReservaViewModel) {
         }
     }
 }
-
 

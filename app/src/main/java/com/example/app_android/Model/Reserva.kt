@@ -4,10 +4,10 @@ import java.util.*
 
 data class Reserva(
     val id: String? = null, // MongoDB _id
-    val numeroHabitacion: String,
-    val tipoHabitacion: String,
-    val fechaInicio: Date,
-    val fechaFin: Date,
+    val n_habitacion: String,
+    val tipo_habitacion: String,
+    val f_Inicio: Date,
+    val f_Final: Date,
     val totalDias: Int,
     val huespedEmail: String,
     val huespedNombre: String,
@@ -15,8 +15,8 @@ data class Reserva(
     val huespedDni: String,
     val trabajadorEmail: String,
     val numeroHuespedes: Int,
-    val precioNoche: Double,
-    val precioTotal: Double,
+    val precio_noche: Double,
+    val precio_total: Double,
     val cuna: Boolean,
     val camaExtra: Boolean
 )
