@@ -1,6 +1,7 @@
 package com.example.app_android.View.Navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -18,13 +19,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     object Perfil : BottomNavItem("perfil", Icons.Default.Person, "Perfil")
     object Reservas : BottomNavItem("reservas", Icons.Default.DateRange, "Reservas")
+    object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "Reservar") // Nuevo botón
+
 }
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Perfil,
-        BottomNavItem.Reservas
+        BottomNavItem.Reservas,
+        BottomNavItem.Reservar // Añadido a la lista
+
     )
 
     NavigationBar {

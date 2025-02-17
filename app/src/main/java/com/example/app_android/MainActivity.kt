@@ -19,10 +19,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.app_android.View.CrearReserva.ReservaScreen
 import com.example.app_android.View.MenuHabitaciones.pantallaHabitaciones
 import com.example.app_android.View.Navigation.BottomNavItem
 import com.example.app_android.View.Navigation.BottomNavigationBar
 import com.example.app_android.ViewModel.HabitacionViewModel
+import com.example.app_android.ViewModel.ReservaViewModel
 import com.example.app_android.ui.theme.AppandroidTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -31,6 +33,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val habitacionViewModel : HabitacionViewModel by viewModels()
+        val reservaViewModel: ReservaViewModel by viewModels()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -47,6 +50,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(BottomNavItem.Reservas.route) { pantallaHabitaciones(habitacionViewModel) }
                         composable(BottomNavItem.Perfil.route) { Greeting("joel") }
+                        composable(BottomNavItem.Reservar.route){ ReservaScreen(reservaViewModel) }
                     }
                         habitaciones.value.forEach{ habitacion ->
                             Log.d("Habitacion", (habitacion.numeroHabitacion + habitacion.fotos.count()).toString())
