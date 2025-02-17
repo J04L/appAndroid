@@ -31,6 +31,7 @@ class HabitacionViewModel : ViewModel() {
             }
         }
     }
+
     private fun obtenerHabitaciones(){
         viewModelScope.launch{
             try{

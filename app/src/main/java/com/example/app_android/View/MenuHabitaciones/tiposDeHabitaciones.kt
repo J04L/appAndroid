@@ -47,22 +47,15 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
 
         LaunchedEffect(someBoxIsSelected) {
             if (!someBoxIsSelected) return@LaunchedEffect
-            listaVisibles = listaVisibles.mapValues { (clave, _) ->
-                if(clave != selectedBox) 0f else 1f
-            }.toMutableMap()
-            delay(500)
-            listaVisibles = listaVisibles.mapValues { 1f }.toMutableMap()
-            delay(125)
-            listaVisibles = listaVisibles.mapValues { (clave, _) ->
-                if(clave != selectedBox) 0f else 1f
-            }.toMutableMap()
-            delay(100)
-            listaVisibles = listaVisibles.mapValues { 1f }.toMutableMap()
-            delay(250)
-            listaVisibles = listaVisibles.mapValues { (clave, _) ->
-                if(clave != selectedBox) 0f else 1f
-            }.toMutableMap()
-            someBoxIsSelected = false
+
+            listaVisibles.forEach{ box ->
+                if(box.key != selectedBox){
+                    delay(125)
+                    listaVisibles = listaVisibles.mapValues { (key, value) ->
+                        if(key == box.key) 0f else value
+                    }.toMutableMap()
+                }
+            }
         }
 
         val foreground = Color.White
