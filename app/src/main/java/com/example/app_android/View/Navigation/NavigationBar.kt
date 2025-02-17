@@ -21,6 +21,8 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
     object Reservas : BottomNavItem("reservas", Icons.Default.DateRange, "Reservas")
     object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "Reservar") // Nuevo botón
 
+    object Login : BottomNavItem("login",Icons.Default.Person,"Login")
+    object Register: BottomNavItem("register",Icons.Default.Person,"Register")
 }
 
 @Composable
@@ -31,22 +33,28 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem.Reservar // Añadido a la lista
 
     )
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
-    NavigationBar {
-        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+    // Check if the current route is NOT the Login or Register route
+    if (currentRoute != BottomNavItem.Login.route && currentRoute != BottomNavItem.Register.route) {
+        val items = listOf(
+            BottomNavItem.Perfil,
+            BottomNavItem.Reservas,
+        )
 
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
-                label = { Text(item.title) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route)
+        NavigationBar {
+            items.forEach { item ->
+                NavigationBarItem(
+                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                    label = { Text(item.title) },
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        if (currentRoute != item.route) {
+                            navController.navigate(item.route)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
-
