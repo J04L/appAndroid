@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
 import coil.compose.AsyncImage
+import com.example.app_android.Model.TipoHabitacion
 import com.example.app_android.ViewModel.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,14 +31,12 @@ import java.util.*
 import java.util.Locale
 
 @Composable
-fun ReservaScreen(viewModel: ReservaViewModel) {
+fun ReservaScreen(viewModel: ReservaViewModel, tipoHabitacion: TipoHabitacion) {
     val context = LocalContext.current
     var habitacionesDisponibles by remember { mutableStateOf<List<Habitacion1>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val coroutineScope = rememberCoroutineScope()
-
-
 
 
     Column(
@@ -47,54 +46,18 @@ fun ReservaScreen(viewModel: ReservaViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        @Composable
-        fun HuespedesDropdown(
-            selectedHuespedes: Int,
-            onHuespedesSelected: (Int) -> Unit
-        ) {
-            var expanded by remember { mutableStateOf(false) }
-            val opciones = (1..6).toList() // Permite seleccionar de 1 a 6 huéspedes
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.CenterStart)
-            ) {
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = { expanded = true },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4))
-                ) {
-                    Text(text = "Huéspedes: $selectedHuespedes", color = Color.White)
-                }
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    opciones.forEach { opcion ->
-                        DropdownMenuItem(
-                            text = { Text(text = opcion.toString()) },
-                            onClick = {
-                                onHuespedesSelected(opcion)
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
         Text(text = "Reserva tu estancia", fontSize = 22.sp)
 
         // 📅 Fecha de Inicio
-        FechaSelector("Fecha de inicio", viewModel.fechaInicio) {
-            showDatePicker(context) { date -> viewModel.fechaInicio = date }
-        }
+            FechaSelector("Fecha de inicio", viewModel.fechaInicio) {
+                showDatePicker(context) { date -> viewModel.fechaInicio = date }
+            }
 
-        // 📅 Fecha de Salida
-        FechaSelector("Fecha de salida", viewModel.fechaSalida) {
-            showDatePicker(context) { date -> viewModel.fechaSalida = date }
-        }
+            // 📅 Fecha de Salida
+            FechaSelector("Fecha de salida", viewModel.fechaSalida) {
+                showDatePicker(context) { date -> viewModel.fechaSalida = date }
+            }
 
         // 👤 Selección de huéspedes
         Card(
@@ -167,6 +130,43 @@ fun ReservaScreen(viewModel: ReservaViewModel) {
 
         errorMessage?.let {
             Text(text = "Error: $it", color = Color.Red)
+        }
+    }
+}
+@Composable
+fun HuespedesDropdown(
+    selectedHuespedes: Int,
+    onHuespedesSelected: (Int) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val opciones = (1..6).toList() // Permite seleccionar de 1 a 6 huéspedes
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.CenterStart)
+    ) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { expanded = true },
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03A9F4))
+        ) {
+            Text(text = "Huéspedes: $selectedHuespedes", color = Color.White)
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            opciones.forEach { opcion ->
+                DropdownMenuItem(
+                    text = { Text(text = opcion.toString()) },
+                    onClick = {
+                        onHuespedesSelected(opcion)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }

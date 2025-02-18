@@ -42,7 +42,7 @@ android {
 
 dependencies {
     implementation(libs.androidx.navigation.compose.v275)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation(libs.kotlinx.serialization.json)
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("androidx.compose.runtime:runtime:1.7.8")

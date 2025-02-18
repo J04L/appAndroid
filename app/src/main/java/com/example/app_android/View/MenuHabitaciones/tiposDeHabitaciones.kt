@@ -1,6 +1,8 @@
 package com.example.app_android.View.MenuHabitaciones
 
 import android.net.Uri
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +14,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
@@ -21,20 +33,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.app_android.Model.Habitacion
+import com.example.app_android.Model.TipoHabitacion
+import com.example.app_android.View.CrearReserva.FechaSelector
+import com.example.app_android.View.CrearReserva.showDatePicker
+import com.example.app_android.View.Navigation.BottomNavItem
 import com.example.app_android.ViewModel.HabitacionViewModel
+import com.example.app_android.ViewModel.ReservaViewModel
 import kotlinx.coroutines.delay
-
-
-
-
-
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 @Composable
-fun pantallaHabitaciones(viewModel: HabitacionViewModel){
+fun pantallaHabitaciones(viewModel: HabitacionViewModel, navController: NavController){
     var lista = viewModel.tipoHabitaciones.collectAsState().value;
     BoxWithConstraints(){
         var someBoxIsSelected by remember { mutableStateOf(false) }
@@ -57,6 +75,18 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
                     }.toMutableMap()
                 }
             }
+            delay(125)
+            listaVisibles = listaVisibles.mapValues { (key, value) ->
+                if(key == selectedBox) 0f else value
+            }.toMutableMap()
+
+            val tipoHabitacionSeleccionado = lista.find{ tipo ->
+                tipo.nombreTipo == selectedBox
+            }
+            val jsonTipoHabitacion = tipoHabitacionSeleccionado?.let { Json.encodeToString(it) } ?: "{}"
+
+            val encodedJson = Uri.encode(jsonTipoHabitacion) // Evita errores de URL
+            navController.navigate(BottomNavItem.Reservar.route + "/$encodedJson")
         }
 
         val foreground = Color.White
@@ -228,5 +258,6 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel){
         }
     }
 }
+
 
 

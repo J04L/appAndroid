@@ -1,6 +1,8 @@
 package com.example.app_android.Model
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Habitacion(
     @SerializedName("numeroHabitacion")
     val numeroHabitacion: Int,
@@ -22,6 +24,7 @@ data class Habitacion(
     val piso: Int
 )
 
+@Serializable
 data class Camas(
     @SerializedName("individual")
     val individual: Int,

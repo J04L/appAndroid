@@ -1,29 +1,30 @@
 package com.example.app_android.Model
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class TipoHabitacion(
-    @SerializedName("nombreTipo")
+    @SerialName("nombreTipo")
     val nombreTipo: String,
 
-    @SerializedName("precioBase")
+    @SerialName("precioBase")
     val precioBase: Double,
 
-    @SerializedName("capacidadCamas")
+    @SerialName("capacidadCamas")
     val capacidadCamas: Int,
 
-    @SerializedName("capacidadPersonas")
+    @SerialName("capacidadPersonas")
     val capacidadPersonas: CapacidadPersonas
 )
 
 @Serializable
 data class CapacidadPersonas(
-    @SerializedName("adultos")
+    @SerialName("adultos")
     val adultos: Int,
 
-    @SerializedName("menores")
+    @SerialName("menores")
     val menores: Int
 ){
     override fun toString(): String {

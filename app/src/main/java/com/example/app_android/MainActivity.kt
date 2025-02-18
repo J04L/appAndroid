@@ -2,7 +2,6 @@ package com.example.app_android
 
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,20 +17,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app_android.View.CrearReserva.ReservaScreen
-import com.example.app_android.View.Login.LoginScreen
 import com.example.app_android.View.MenuHabitaciones.pantallaHabitaciones
 import com.example.app_android.View.Navigation.BottomNavItem
 import com.example.app_android.View.Navigation.BottomNavigationBar
-import com.example.app_android.View.Register.RegisterScreen
 import com.example.app_android.ViewModel.HabitacionViewModel
 import com.example.app_android.ViewModel.ReservaViewModel
 import com.example.app_android.ViewModel.LoginViewModel
 import com.example.app_android.ViewModel.RegisterViewModel
 import com.example.app_android.ui.theme.AppandroidTheme
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.app_android.Model.TipoHabitacion
 import com.example.app_android.View.historial.HistorialReservasScreen
+import com.example.app_android.ViewModel.HistorialReservaViewModel
 import com.example.app_android.ViewModel.LoginViewModelFactory
 import com.example.app_android.ViewModel.RetrofitClient
+import kotlinx.serialization.json.Json
 
 
 class MainActivity : ComponentActivity() {
@@ -45,7 +46,6 @@ class MainActivity : ComponentActivity() {
         val reservaViewModel: ReservaViewModel by viewModels()
         val loginViewModel: LoginViewModel by viewModels {
             LoginViewModelFactory(apiService)
-
         }
         val registerViewModel: RegisterViewModel by viewModels()
         super.onCreate(savedInstanceState)
@@ -64,21 +64,27 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = BottomNavItem.Reservar.route,
+                        startDestination = BottomNavItem.Habitaciones.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        composable(BottomNavItem.Register.route){ RegisterScreen(navController,registerViewModel) }
-                        composable(BottomNavItem.Login.route){ LoginScreen (navController,loginViewModel )}
-                        composable(BottomNavItem.Reservas.route) {
+                        composable(BottomNavItem.Habitaciones.route) {
                             pantallaHabitaciones(
-                                habitacionViewModel
+                                habitacionViewModel, navController
                             )
                         }
                         composable(BottomNavItem.Historial.route) {
                             HistorialReservasScreen(email = "heliosstarservitor@gmail.com", viewModel = historialReservaViewModel)
                         }
                         composable(BottomNavItem.Perfil.route) { Greeting("joel") }
-                        composable(BottomNavItem.Reservar.route){ ReservaScreen(reservaViewModel) }
+                        composable(BottomNavItem.Reservar.route + "/{tipoHabitacion}",
+                            arguments = listOf(navArgument("tipoHabitacion") { type = NavType.StringType }))
+                            { backStackEntry ->
+                                val jsonTipoHabitacion = backStackEntry.arguments?.getString("tipoHabitacion")
+                                val tipoHabitacion= jsonTipoHabitacion?.let { json ->
+                                    Json.decodeFromString<TipoHabitacion>(json)
+                                }
+                                tipoHabitacion?.let { ReservaScreen(reservaViewModel, it) }
+                        }
                     }
                 }
             }

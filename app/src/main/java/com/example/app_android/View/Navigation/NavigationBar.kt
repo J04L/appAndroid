@@ -3,11 +3,8 @@ package com.example.app_android.View.Navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -19,10 +16,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     object Perfil : BottomNavItem("perfil", Icons.Default.Person, "Perfil")
-    object Reservas : BottomNavItem("reservas", Icons.Default.DateRange, "Reservas")
-    object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "Reservar") // Nuevo botón
-    object Login : BottomNavItem("login",Icons.Default.Person,"Login")
-    object Register: BottomNavItem("register",Icons.Default.Person,"Register")
+    object Habitaciones : BottomNavItem("habitaciones", Icons.Default.DateRange, "Reservar")
+    object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "None") // Nuevo botón
     object Historial : BottomNavItem("historial", Icons.Default.Search, "Historial")
 }
 
@@ -30,9 +25,8 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Perfil,
-        BottomNavItem.Reservas,
-        BottomNavItem.Reservar,
-        BottomNavItem.Historial // Añadido Historial aquí
+        BottomNavItem.Habitaciones,
+        BottomNavItem.Historial
     )
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
