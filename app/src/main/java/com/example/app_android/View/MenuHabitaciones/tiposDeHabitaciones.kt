@@ -1,5 +1,6 @@
 package com.example.app_android.View.MenuHabitaciones
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

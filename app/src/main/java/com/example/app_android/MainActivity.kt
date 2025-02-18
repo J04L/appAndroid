@@ -30,7 +30,6 @@ import com.example.app_android.ViewModel.RegisterViewModel
 import com.example.app_android.ui.theme.AppandroidTheme
 import androidx.lifecycle.ViewModelProvider
 import com.example.app_android.View.historial.HistorialReservasScreen
-import com.example.app_android.ViewModel.HistorialReservaViewModel
 import com.example.app_android.ViewModel.LoginViewModelFactory
 import com.example.app_android.ViewModel.RetrofitClient
 
