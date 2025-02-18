@@ -1,5 +1,6 @@
 package com.example.app_android
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -28,21 +29,32 @@ import com.example.app_android.ViewModel.LoginViewModel
 import com.example.app_android.ViewModel.RegisterViewModel
 import com.example.app_android.ui.theme.AppandroidTheme
 import androidx.lifecycle.ViewModelProvider
+import com.example.app_android.View.historial.HistorialReservasScreen
+import com.example.app_android.ViewModel.HistorialReservaViewModel
 import com.example.app_android.ViewModel.LoginViewModelFactory
 import com.example.app_android.ViewModel.RetrofitClient
 
 
 class MainActivity : ComponentActivity() {
+    private var mediaPlayer: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         val apiService = RetrofitClient.instance
+        val historialReservaViewModel: HistorialReservaViewModel by viewModels()
         val habitacionViewModel : HabitacionViewModel by viewModels()
         val reservaViewModel: ReservaViewModel by viewModels()
         val loginViewModel: LoginViewModel by viewModels {
             LoginViewModelFactory(apiService)
+
         }
         val registerViewModel: RegisterViewModel by viewModels()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Inicializar el MediaPlayer con el archivo de música en 'raw'
+        mediaPlayer = MediaPlayer.create(this, R.raw.costalow)  // Asegúrate de usar el nombre correcto de tu archivo
+        mediaPlayer?.isLooping = true  // Para que la música se repita en bucle
+        mediaPlayer?.start()  // Comienza la reproducción
         setContent {
             AppandroidTheme {
                 val habitaciones = habitacionViewModel.Habitaciones.collectAsState()
@@ -53,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = BottomNavItem.Reservas.route,
+                        startDestination = BottomNavItem.Reservar.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(BottomNavItem.Register.route){ RegisterScreen(navController,registerViewModel) }
@@ -63,12 +75,20 @@ class MainActivity : ComponentActivity() {
                                 habitacionViewModel
                             )
                         }
+                        composable(BottomNavItem.Historial.route) {
+                            HistorialReservasScreen(email = "heliosstarservitor@gmail.com", viewModel = historialReservaViewModel)
+                        }
                         composable(BottomNavItem.Perfil.route) { Greeting("joel") }
                         composable(BottomNavItem.Reservar.route){ ReservaScreen(reservaViewModel) }
                     }
                 }
             }
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.stop()  // Detiene la música
+        mediaPlayer?.release()  // Libera los recursos
     }
 }
 

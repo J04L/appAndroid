@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -22,6 +23,7 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
     object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "Reservar") // Nuevo botón
     object Login : BottomNavItem("login",Icons.Default.Person,"Login")
     object Register: BottomNavItem("register",Icons.Default.Person,"Register")
+    object Historial : BottomNavItem("historial", Icons.Default.Search, "Historial")
 }
 
 @Composable
@@ -29,31 +31,23 @@ fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Perfil,
         BottomNavItem.Reservas,
-        BottomNavItem.Reservar // Añadido a la lista
-
+        BottomNavItem.Reservar,
+        BottomNavItem.Historial // Añadido Historial aquí
     )
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
-    // Check if the current route is NOT the Login or Register route
-    if (currentRoute != BottomNavItem.Login.route && currentRoute != BottomNavItem.Register.route) {
-        val items = listOf(
-            BottomNavItem.Perfil,
-            BottomNavItem.Reservas,
-        )
-
-        NavigationBar {
-            items.forEach { item ->
-                NavigationBarItem(
-                    icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
-                    label = { Text(item.title) },
-                    selected = currentRoute == item.route,
-                    onClick = {
-                        if (currentRoute != item.route) {
-                            navController.navigate(item.route)
-                        }
+    NavigationBar {
+        items.forEach { item ->
+            NavigationBarItem(
+                icon = { Icon(imageVector = item.icon, contentDescription = item.title) },
+                label = { Text(item.title) },
+                selected = currentRoute == item.route,
+                onClick = {
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route)
                     }
-                )
-            }
+                }
+            )
         }
     }
 }
