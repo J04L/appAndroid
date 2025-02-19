@@ -18,6 +18,7 @@ class HabitacionViewModel : ViewModel() {
 
     init {
         obtenerTipoHabitaciones()
+
         obtenerHabitaciones()
     }
 
@@ -26,6 +27,7 @@ class HabitacionViewModel : ViewModel() {
             try {
                 // Asignar el nuevo mapa para actualizar el StateFlow
                 _tipoHabitaciones.value = RetrofitClient.instance.obtenerTipoHabitaciones()
+
             } catch (e: Exception) {
                 _tipoHabitaciones.value = emptyList() // Manejamos errores correctamente
             }

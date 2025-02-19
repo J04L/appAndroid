@@ -6,25 +6,25 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TipoHabitacion(
-    @SerialName("nombreTipo")
+    @SerializedName("nombreTipo")
     val nombreTipo: String,
 
-    @SerialName("precioBase")
+    @SerializedName("precioBase")
     val precioBase: Double,
 
-    @SerialName("capacidadCamas")
+    @SerializedName("capacidadCamas")
     val capacidadCamas: Int,
 
-    @SerialName("capacidadPersonas")
+    @SerializedName("capacidadPersonas")
     val capacidadPersonas: CapacidadPersonas
 )
 
 @Serializable
 data class CapacidadPersonas(
-    @SerialName("adultos")
+    @SerializedName("adultos")
     val adultos: Int,
 
-    @SerialName("menores")
+    @SerializedName("menores")
     val menores: Int
 ){
     override fun toString(): String {

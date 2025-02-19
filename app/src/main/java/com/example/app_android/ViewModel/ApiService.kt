@@ -27,7 +27,6 @@ interface ApiService {
     @GET("habitacion")
     suspend fun obtenerHabitaciones(): List<Habitacion>
 
-
     @POST("reservas/new")
     suspend fun crearReserva(@Body reserva: Reserva): Response<Reserva>
 
