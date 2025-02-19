@@ -31,7 +31,7 @@ import java.util.*
 import java.util.Locale
 
 @Composable
-fun ReservaScreen(viewModel: ReservaViewModel, tipoHabitacion: TipoHabitacion) {
+fun ReservaScreen(viewModel: ReservaViewModel) {
     val context = LocalContext.current
     var habitacionesDisponibles by remember { mutableStateOf<List<Habitacion1>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }

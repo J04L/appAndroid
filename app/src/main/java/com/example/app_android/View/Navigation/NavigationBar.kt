@@ -17,7 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     object Perfil : BottomNavItem("perfil", Icons.Default.Person, "Perfil")
     object Habitaciones : BottomNavItem("habitaciones", Icons.Default.DateRange, "Reservar")
-    object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "None") // Nuevo botón
+    object Reservar : BottomNavItem("reservar", Icons.Default.AddCircle, "None")
     object Historial : BottomNavItem("historial", Icons.Default.Search, "Historial")
 }
 

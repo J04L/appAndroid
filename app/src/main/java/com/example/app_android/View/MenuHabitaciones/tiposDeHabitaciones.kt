@@ -83,10 +83,7 @@ fun pantallaHabitaciones(viewModel: HabitacionViewModel, navController: NavContr
             val tipoHabitacionSeleccionado = lista.find{ tipo ->
                 tipo.nombreTipo == selectedBox
             }
-            val jsonTipoHabitacion = tipoHabitacionSeleccionado?.let { Json.encodeToString(it) } ?: "{}"
-
-            val encodedJson = Uri.encode(jsonTipoHabitacion) // Evita errores de URL
-            navController.navigate(BottomNavItem.Reservar.route + "/$encodedJson")
+            navController.navigate(BottomNavItem.Reservar.route)
         }
 
         val foreground = Color.White

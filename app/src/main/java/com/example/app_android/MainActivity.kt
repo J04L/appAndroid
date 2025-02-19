@@ -76,15 +76,8 @@ class MainActivity : ComponentActivity() {
                             HistorialReservasScreen(email = "heliosstarservitor@gmail.com", viewModel = historialReservaViewModel)
                         }
                         composable(BottomNavItem.Perfil.route) { Greeting("joel") }
-                        composable(BottomNavItem.Reservar.route + "/{tipoHabitacion}",
-                            arguments = listOf(navArgument("tipoHabitacion") { type = NavType.StringType }))
-                            { backStackEntry ->
-                                val jsonTipoHabitacion = backStackEntry.arguments?.getString("tipoHabitacion")
-                                val tipoHabitacion= jsonTipoHabitacion?.let { json ->
-                                    Json.decodeFromString<TipoHabitacion>(json)
-                                }
-                                tipoHabitacion?.let { ReservaScreen(reservaViewModel, it) }
-                        }
+                        composable(BottomNavItem.Reservar.route) {ReservaScreen(reservaViewModel) }
+
                     }
                 }
             }

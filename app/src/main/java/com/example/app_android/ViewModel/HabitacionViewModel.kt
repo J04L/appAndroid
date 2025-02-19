@@ -18,14 +18,13 @@ class HabitacionViewModel : ViewModel() {
 
     init {
         obtenerTipoHabitaciones()
-
         obtenerHabitaciones()
     }
 
     private fun obtenerTipoHabitaciones() {
         viewModelScope.launch {
             try {
-                // Asignar el nuevo mapa para actualizar el StateFlow
+                // Asignar el nuevo valor para actualizar el StateFlow
                 _tipoHabitaciones.value = RetrofitClient.instance.obtenerTipoHabitaciones()
 
             } catch (e: Exception) {
@@ -38,7 +37,6 @@ class HabitacionViewModel : ViewModel() {
         viewModelScope.launch{
             try{
                 _habitaciones.value = RetrofitClient.instance.obtenerHabitaciones().toMutableList()
-                Log.d("hola", _habitaciones.value[0].numeroHabitacion.toString())
             }catch (e: Exception){
                 _habitaciones.value = mutableListOf()
             }
